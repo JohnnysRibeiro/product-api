@@ -6,12 +6,16 @@
 ruby 2.3.1p112
 ```
 
-
 * Rails version
 
 ```sh
 Rails 5.0.7
 ```
+
+* Database Configuration
+
+This project uses Postgres, so make sure it's running when using this API.
+
 * Configuration
 
 After downloading the project, run
