@@ -122,10 +122,10 @@ class ProductsController < ApplicationController
 			"e_sedex_grupo_3"]
 			.include?(@delivery_type))
 		
-		@error_delivery_type = "Forma de envio inválida."
+  		@error_delivery_type = "Forma de envio inválida."
 
-		@delivery_type_is_valid = false
-	end
+  		@delivery_type_is_valid = false
+  	end
   end
 
 end
