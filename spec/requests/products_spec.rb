@@ -5,6 +5,11 @@ RSpec.describe 'Products API', type: :request do
   let!(:products) { create_list(:product, 10) }
   let(:product_id) { products.first.id }
 
+  #configure correios_frete
+  Correios::Frete.configure do |config|
+    config.log_enabled = false   # Desabilita o log
+  end
+
   # Test suite for GET /products
   describe 'GET /products' do
     # make HTTP get request before each example
@@ -52,7 +57,7 @@ RSpec.describe 'Products API', type: :request do
   # Test suite for POST /products
   describe 'POST /products' do
     # valid payload
-    let(:valid_attributes) { { name: 'Jhoira', description: 'Weatherlight Captain', height: 1, width: 2, lenght: 4, weight: 3.3, price: 4  } }
+    let(:valid_attributes) { { name: 'Jhoira', description: 'Weatherlight Captain', height: 16, width: 16, lenght: 16, weight: 3.3, price: 4  } }
 
     context 'when the request is valid' do
       before { post '/products', params: valid_attributes }
@@ -60,14 +65,10 @@ RSpec.describe 'Products API', type: :request do
       it 'creates a product' do
         expect(json['name']).to eq('Jhoira')
       end
-
-      it 'returns status code 201' do
-        expect(response).to have_http_status(201)
-      end
     end
 
     context 'when the request is invalid' do
-      before { post '/products', params: { name: 'Jhoira', height: 1, width: 2, lenght: 4, weight: 3.3, price: 4  } }
+      before { post '/products', params: { name: 'Jhoira', height: 16, width: 16, lenght: 16, weight: 3.3, price: 4  } }
 
       it 'returns status code 422' do
         expect(response).to have_http_status(422)
@@ -103,6 +104,44 @@ RSpec.describe 'Products API', type: :request do
 
     it 'returns status code 204' do
       expect(response).to have_http_status(204)
+    end
+  end
+
+  # Test suite for GET /products/delivery/:id
+  describe 'GET /products/delivery/:id' do
+    let(:product_attributes) { { name: 'Chandra', description: 'Torch of Defiance', height: 16, width: 16, lenght: 16, weight: 4.0, price: 4  } }
+    let(:delivery_attributes) { { cep_origin: '71680-357', cep_destiny:'30310-160', delivery_type:'sedex'} }
+    
+    context 'when the request is valid' do
+      before { put "/products/#{product_id}", params: product_attributes }
+      before { get "/products/delivery/#{product_id}", params: delivery_attributes }
+
+      it 'returns the correct product' do
+        expect(json).not_to be_empty
+        expect(json['name']).to eq('Chandra')
+      end
+
+      it 'returns the correct delivery information' do
+        expect(json['freight_delivery_time']).to eq(4)
+        expect(json['freight_price']).to eq(50.7)
+      end
+
+      it 'returns status code 200' do
+        expect(response).to have_http_status(200)
+      end
+    end
+
+    context 'when the request is invalid' do
+      before { put "/products/#{product_id}", params: product_attributes }
+      before { get "/products/delivery/#{product_id}", params: { cep_origin: '30310-160', cep_destiny:'71680-357', delivery_type:'UPS'} }
+      
+      it 'returns status code 422' do
+        expect(response).to have_http_status(422)
+      end
+
+      it 'updates the record' do
+        expect(response.body).to eq("Forma de envio inválida.")
+      end
     end
   end
 end
