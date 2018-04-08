@@ -11,4 +11,8 @@ RSpec.describe Product, type: :model do
   it { should validate_presence_of(:width) }
   it { should validate_presence_of(:lenght) }
   it { should validate_presence_of(:price) }
+
+  it { should validate_numericality_of(:height) }
+  it { should validate_numericality_of(:width) }
+  it { should validate_numericality_of(:lenght) }
 end

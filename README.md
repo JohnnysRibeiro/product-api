@@ -20,7 +20,15 @@ After downloading the project, run
 $ bundle install
 ```
 
-to install the dependencies. To run the server, use
+to install the dependencies.
+
+Then, run the migrations with
+
+```sh
+$ rake db:migrate
+```
+
+To run the server, use
 
 ```sh
 rails s
@@ -34,7 +42,7 @@ To run the test  suite, run
 $ bundle exec rspec
 ```
 
-* Services (job queues, cache servers, search engines, etc.)
+* Services 
 
 There are 2 main endpoints in this API, the create endpoint, and the check the delivery information endpoint. You can test them with [HTTPie](https://httpie.org/).
 
